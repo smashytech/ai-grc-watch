@@ -1,0 +1,28 @@
+/* AI GRC Watch: desktop layout for issue pages.
+   Phones and small windows keep the original email layout untouched.
+   Issue pages are email HTML with inline styles, so these rules match on the
+   inline styles (hence the [style*=...] selectors) and use !important. */
+@media (min-width: 1100px) {
+  body { background-color: #e8ecf1 !important; }
+
+  /* wider page */
+  table[style*="max-width:640px"] { max-width: 1040px !important; }
+  td[style*="padding:32px 32px 26px 32px"] { padding: 44px 48px 36px !important; }
+  h1 { font-size: 64px !important; }
+
+  /* top block: wider story column + wider "In this issue" box */
+  div[style*="max-width:336px"], div[style*="max-width:340px"] { max-width: 640px !important; }
+  div[style*="max-width:236px"] { max-width: 300px !important; }
+  h2 { font-size: 32px !important; }
+
+  /* developments and deadline calendar: two columns */
+  table:has(> tbody > tr > td[style*="padding:22px 0"]) > tbody,
+  table:has(> tbody > tr > td[style*="padding:0 0 12px 0"]) > tbody {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+    align-items: start;
+  }
+  table:has(> tbody > tr > td[style*="padding:22px 0"]) > tbody > tr,
+  table:has(> tbody > tr > td[style*="padding:0 0 12px 0"]) > tbody > tr { display: block !important; }
+}

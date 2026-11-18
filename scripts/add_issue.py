@@ -5,6 +5,7 @@ Usage:
   python3 scripts/add_issue.py ISSUE.html            # an issue file the weekly task wrote
   python3 scripts/add_issue.py --gmail MESSAGE.json  # a Gmail get_message result (for back-filling)
   python3 scripts/add_issue.py --check               # validate the whole archive
+  python3 scripts/add_issue.py --upgrade             # add the desktop-layout stylesheet link to every issue
 
 What it does:
   1. Checks the HTML is real HTML (not escaped &lt;div&gt;) and reads the issue
@@ -34,6 +35,17 @@ NAV = (
     'text-transform:uppercase;"><a href="../" style="color:#ffffff;'
     'text-decoration:none;font-weight:bold;">&larr; All issues</a></div>'
 )
+
+LAYOUT_MARKER = "<!-- agw-layout -->"
+LAYOUT_LINK = LAYOUT_MARKER + '<link rel="stylesheet" href="../assets/issue.css">\n'
+
+
+def with_layout(doc):
+    """Link the shared desktop stylesheet (assets/issue.css) once, just before </head>."""
+    if LAYOUT_MARKER in doc:
+        return doc
+    return re.sub(r"</head>", LAYOUT_LINK.replace("\\", "\\\\") + "</head>", doc, count=1, flags=re.I)
+
 
 HEAD = (
     '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n'
@@ -127,6 +139,7 @@ def add(doc):
     if MARKER not in doc:
         doc = re.sub(r"(<body[^>]*>)", r"\1\n" + NAV.replace("\\", "\\\\"), doc, count=1)
 
+    doc = with_layout(doc)
     ISSUES.mkdir(exist_ok=True)
     path.write_text(doc, encoding="utf-8")
     meta["file"] = "issues/" + name
@@ -162,9 +175,25 @@ def check():
     print("OK: %d issues" % len(entries))
 
 
+def upgrade():
+    """Add the desktop-layout link to every issue file that lacks it (safe to re-run)."""
+    changed = 0
+    for f in sorted(ISSUES.glob("*.html")):
+        with open(f, encoding="utf-8", newline="") as fh:   # keep original line endings
+            d = fh.read()
+        n = with_layout(d)
+        if n != d:
+            with open(f, "w", encoding="utf-8", newline="") as fh:
+                fh.write(n)
+            changed += 1
+    print("UPGRADED %d issue file(s)" % changed)
+
+
 def main(argv):
     if argv == ["--check"]:
         check()
+    elif argv == ["--upgrade"]:
+        upgrade()
     elif len(argv) == 2 and argv[0] == "--gmail":
         msg = json.loads(Path(argv[1]).read_text(encoding="utf-8"))
         add(msg.get("htmlBody") or fail("no htmlBody in " + argv[1]))
