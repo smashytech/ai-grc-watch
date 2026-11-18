@@ -1,0 +1,65 @@
+[
+  {
+    "issue": 7,
+    "date": "2026-11-16",
+    "window": "9–15 Nov 2026",
+    "items": 7,
+    "headline": "Enforcers pick AI targets",
+    "summary": "EU privacy regulators target AI hiring tools, Article 50 guidance reaches the Official Journal and New York opens frontier AI registration.",
+    "file": "issues/2026-11-16-issue-7.html"
+  },
+  {
+    "issue": 6,
+    "date": "2026-11-09",
+    "window": "2–8 Nov 2026",
+    "items": 6,
+    "headline": "Agents get ID checks",
+    "summary": "China sets rules for devices with built-in AI agents, the EU AI Act reaches Northern Ireland, and a CJEU adviser says chatbot answers can infringe press rights.",
+    "file": "issues/2026-11-09-issue-6.html"
+  },
+  {
+    "issue": 5,
+    "date": "2026-11-02",
+    "window": "26 Oct–1 Nov 2026",
+    "items": 5,
+    "headline": "Pressure builds on AI labs",
+    "summary": "New York curbs chatbots for minors, the FTC summons Anthropic executives, and UK peers push for AI Security Institute powers.",
+    "file": "issues/2026-11-02-issue-5.html"
+  },
+  {
+    "issue": 4,
+    "date": "2026-10-26",
+    "window": "19–25 Oct 2026",
+    "items": 6,
+    "headline": "National rules start to bite",
+    "summary": "Italy's AI Act decree takes effect, Texas sues OpenAI, DHS bans DeepSeek in federal systems and the Council sets its Digital Omnibus position.",
+    "file": "issues/2026-10-26-issue-4.html"
+  },
+  {
+    "issue": 3,
+    "date": "2026-10-19",
+    "window": "12–18 Oct 2026",
+    "items": 8,
+    "headline": "Agent incidents drive policy",
+    "summary": "The FTC demands incident records from OpenAI and Anthropic, US agencies publish an AI agent incident playbook, and Singapore and India issue agent guidance.",
+    "file": "issues/2026-10-19-issue-3.html"
+  },
+  {
+    "issue": 2,
+    "date": "2026-10-15",
+    "window": "8–14 Oct 2026",
+    "items": 2,
+    "headline": "Enforcement machinery takes shape",
+    "summary": "Supplement for 8–14 Oct: the Commission consults on AI Act enforcement procedure, and US states seek child-safety terms in the Character.AI sale.",
+    "file": "issues/2026-10-15-issue-2.html"
+  },
+  {
+    "issue": 1,
+    "date": "2026-10-15",
+    "window": "8–14 Oct 2026",
+    "items": 7,
+    "headline": "Enforcement gets real",
+    "summary": "EU AI Office starts AI Act enforcement, eight US states sue OpenAI, the UK readies AI incident rules and ISO/IEC 27090 is published.",
+    "file": "issues/2026-10-15-issue-1.html"
+  }
+]

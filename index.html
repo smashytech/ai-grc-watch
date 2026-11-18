@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI GRC Watch</title>
+<meta name="description" content="Weekly briefing on AI regulation, governance, risk and compliance.">
+<meta name="color-scheme" content="light">
+<style>
+  :root {
+    --ink: #1d1d1f;
+    --muted: #5c6670;
+    --accent: #557aa3;
+    --accent-ink: #4a6d94;
+    --rule: #d9dee4;
+    --paper: #ffffff;
+    --page: #e8ecf1;
+    --tint: #e6edf5;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+  .paper { max-width: 760px; margin: 24px auto; background: var(--paper); padding: 32px 32px 26px; }
+  .kicker, .meta, .label { font-family: Arial, Helvetica, sans-serif; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: bold; }
+  .top { display: flex; justify-content: space-between; gap: 12px; }
+  .top .right { color: var(--accent-ink); }
+  h1 { margin: 14px 0 4px; font-size: 52px; line-height: 1.05; letter-spacing: 1px; text-transform: uppercase; }
+  .sub { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; border-bottom: 1px solid var(--ink); padding-bottom: 10px; font-size: 16px; }
+  .rule { height: 3px; background: var(--ink); margin-top: 3px; }
+  .section { margin-top: 28px; border-top: 3px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 7px 0; font-size: 17px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+
+  .lead { display: block; margin-top: 18px; padding: 20px 22px; background: var(--accent); color: #fff; text-decoration: none; }
+  .lead .meta { color: #dbe5f0; }
+  .lead h2 { margin: 8px 0 8px; font-size: 28px; line-height: 1.15; text-transform: uppercase; }
+  .lead p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; }
+  .lead .go { font-family: Arial, Helvetica, sans-serif; font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: bold; }
+  .lead:hover .go, .lead:focus-visible .go { text-decoration: underline; }
+
+  ol.list { list-style: none; margin: 0; padding: 0; }
+  ol.list li a { display: grid; grid-template-columns: 64px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--rule); color: inherit; text-decoration: none; }
+  .no { width: 56px; background: var(--ink); color: #fff; text-align: center; padding: 6px 0 7px; font-family: Arial, Helvetica, sans-serif; align-self: start; }
+  .no small { display: block; font-size: 10px; letter-spacing: 1.5px; font-weight: bold; }
+  .no b { display: block; font-family: Georgia, serif; font-size: 24px; line-height: 26px; }
+  ol.list .meta { color: var(--accent-ink); }
+  ol.list h3 { margin: 4px 0 6px; font-size: 20px; line-height: 1.25; }
+  ol.list p { margin: 0; font-size: 14px; line-height: 1.5; color: #3b4148; }
+  ol.list li a:hover h3, ol.list li a:focus-visible h3 { text-decoration: underline; }
+
+  .note { margin-top: 26px; border-top: 1px solid var(--ink); padding-top: 12px; font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.6; color: var(--muted); }
+  .empty { padding: 18px; background: var(--tint); border-left: 4px solid var(--accent); font-size: 15px; margin-top: 18px; }
+
+  @media (max-width: 620px) {
+    .paper { margin: 0; padding: 22px 16px; }
+    h1 { font-size: 36px; letter-spacing: 0; }
+    .sub { flex-direction: column; gap: 4px; }
+    .lead h2 { font-size: 23px; }
+  }
+</style>
+</head>
+<body>
+<main class="paper">
+  <div class="top kicker"><span id="today">Archive</span><span class="right">&#9878; Every Monday</span></div>
+  <h1>AI GRC Watch</h1>
+  <div class="sub"><span>Weekly briefing on <b>AI regulation, governance &amp; compliance</b></span><span class="kicker" id="count"></span></div>
+  <div class="rule"></div>
+
+  <div id="latest"></div>
+  <div class="section">All issues</div>
+  <ol class="list" id="list"></ol>
+  <div id="error"></div>
+
+  <p class="note">Written each Monday by an automated research run and checked against primary sources where possible. Each issue lists its own single-source items and failed sources in the editor's notes. Not legal advice.</p>
+</main>
+
+<script>
+(function () {
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function nice(iso) {
+    var d = new Date(iso + "T12:00:00Z");
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  }
+
+  fetch("issues/index.json", { cache: "no-cache" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (issues) {
+      issues.sort(function (a, b) { return b.issue - a.issue; });
+      document.getElementById("count").textContent = issues.length + (issues.length === 1 ? " issue" : " issues");
+      if (!issues.length) {
+        document.getElementById("latest").innerHTML = '<div class="empty">No issues published yet.</div>';
+        return;
+      }
+      var l = issues[0];
+      document.getElementById("latest").innerHTML =
+        '<a class="lead" href="' + esc(l.file) + '">' +
+        '<div class="meta">Latest &middot; Issue No. ' + esc(l.issue) + ' &middot; ' + esc(nice(l.date)) + '</div>' +
+        '<h2>' + esc(l.headline) + '</h2>' +
+        '<p>' + esc(l.summary) + '</p>' +
+        '<span class="go">Read issue No. ' + esc(l.issue) + ' &rarr;</span></a>';
+
+      document.getElementById("list").innerHTML = issues.map(function (i) {
+        return '<li><a href="' + esc(i.file) + '">' +
+          '<span class="no"><small>NO.</small><b>' + esc(i.issue) + '</b></span>' +
+          '<span><span class="meta">' + esc(nice(i.date)) + ' &middot; Covering ' + esc(i.window) + ' &middot; ' + esc(i.items) + ' items</span>' +
+          '<h3>' + esc(i.headline) + '</h3>' +
+          '<p>' + esc(i.summary) + '</p></span></a></li>';
+      }).join("");
+    })
+    .catch(function () {
+      document.getElementById("error").innerHTML = '<div class="empty">Could not load the issue list. Try reloading the page.</div>';
+    });
+})();
+</script>
+</body>
+</html>
